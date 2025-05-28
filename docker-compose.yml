@@ -44,3 +44,13 @@ services:
     ports:
       - "1080:1080"
       - "1025:1025"
+
+  ruby:
+    container_name: ruby
+    build: ./ruby
+    volumes:
+      - ./ruby:/app
+      - ./files:/files
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /app/credentials.json
+    tty: true
