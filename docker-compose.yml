@@ -1,0 +1,46 @@
+version: '3.5'
+services:
+  parsedmarc:
+    build: ./parsedmarc/
+    volumes:
+      - ./files:/input:ro
+      - ./output_files:/output
+    command: parsedmarc -c /parsedmarc.ini /input/* --debug
+    depends_on:
+      - elasticsearch
+    restart: on-failure
+    container_name: parsedmarc
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.5
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - ./elastic_data:/usr/share/elasticsearch/data
+    container_name: elasticsearch
+
+  grafana:
+    build: ./grafana/
+    ports:
+      - 3000:3000
+    user: root
+    environment:
+      GF_INSTALL_PLUGINS: grafana-piechart-panel,grafana-worldmap-panel
+      GF_AUTH_ANONYMOUS_ENABLED: 'true'
+      GF_SMTP_ENABLED: true
+      GF_SMTP_HOST: mocksmtp:1025
+      GF_SMTP_USER: 
+      GF_SMTP_PASSWORD: 
+      GF_SMTP_FROM_ADDRESS: grafana@example.com
+      GF_SMTP_FROM_NAME: Grafana"
+    container_name: grafana
+
+  # grafanaの通知テスト用
+  mocksmtp:
+    container_name: mocksmtp
+    image: pocari/mailcatcher:v2
+    ports:
+      - "1080:1080"
+      - "1025:1025"
