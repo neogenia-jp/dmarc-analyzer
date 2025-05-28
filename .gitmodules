@@ -1,0 +1,3 @@
+[submodule "dmarc-visualizer"]
+	path = dmarc-visualizer
+	url = https://github.com/debricked/dmarc-visualizer
