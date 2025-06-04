@@ -40,11 +40,13 @@ start_date = ARGV[0] ? Date.parse(ARGV[0]) : (Date.today - 1)
 end_date   = ARGV[1] ? Date.parse(ARGV[1]) : (Date.today - 1)
 
 # Gmailの検索クエリを作成
+# before, afterの指定は日付指定だとPSTタイムゾーンで解釈されてしまうため、UNIXタイムスタンプに変換する
+# https://developers.google.com/workspace/gmail/api/guides/filtering?hl=ja
 query = [
   'has:attachment',
-  'subject:(dmarc)',
-  "after:#{start_date.strftime('%Y/%m/%d')}",
-  "before:#{(end_date + 1).strftime('%Y/%m/%d')}"
+  'from:(dmarc)',
+  "after:#{start_date.to_time.to_i}",
+  "before:#{(end_date + 1).to_time.to_i}" # 日付指定だとPSTタイムゾーンで解釈されるため、UNIXタイムスタンプを使用
 ].join(' ')
 
 puts "検索クエリ: #{query}"
