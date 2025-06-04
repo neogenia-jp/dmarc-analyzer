@@ -49,6 +49,7 @@ query = [
   "before:#{(end_date + 1).to_time.to_i}" # 日付指定だとPSTタイムゾーンで解釈されるため、UNIXタイムスタンプを使用
 ].join(' ')
 
+puts "#{start_date} ~ #{end_date} のDMARCレポートを検索します。"
 puts "検索クエリ: #{query}"
 
 # ユーザーID（'me' は認証されたユーザーを指します）
