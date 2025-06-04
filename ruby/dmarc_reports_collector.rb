@@ -35,8 +35,9 @@ gmail_service.client_options.application_name = APPLICATION_NAME
 gmail_service.authorization = authorize
 
 # 引数で日付範囲を受け取る (フォーマット: YYYY-MM-DD)
-start_date = ARGV[0] ? Date.parse(ARGV[0]) : Date.today - 7
-end_date   = ARGV[1] ? Date.parse(ARGV[1]) : Date.today
+# 日付を受け取らない場合は、前日分が対象となる
+start_date = ARGV[0] ? Date.parse(ARGV[0]) : (Date.today - 1)
+end_date   = ARGV[1] ? Date.parse(ARGV[1]) : (Date.today - 1)
 
 # Gmailの検索クエリを作成
 query = [
