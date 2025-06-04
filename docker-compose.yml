@@ -52,5 +52,6 @@ services:
       - ./ruby:/app
       - ./files:/files
     environment:
-      GOOGLE_APPLICATION_CREDENTIALS: /app/credentials.json
+      CREDENTIALS_PATH:
+      TOKEN_PATH:
     tty: true

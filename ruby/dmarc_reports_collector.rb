@@ -6,8 +6,8 @@ require 'date'
 
 OOB_URI = 'urn:ietf:wg:oauth:2.0:oob'
 APPLICATION_NAME = 'DMARC Report Fetcher'
-CREDENTIALS_PATH = 'credentials.json'
-TOKEN_PATH = 'token.yaml'
+CREDENTIALS_PATH = ENV['CREDENTIALS_PATH'] || '/app/credentials.json'
+TOKEN_PATH = ENV['TOKEN_PATH'] || '/app/token.yaml'
 SCOPE = Google::Apis::GmailV1::AUTH_GMAIL_READONLY
 
 def authorize
