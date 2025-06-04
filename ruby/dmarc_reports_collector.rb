@@ -69,11 +69,14 @@ output_dir = '/files'
 # 各メッセージに対して添付ファイルを保存
 result.messages.each do |msg|
   message = gmail_service.get_user_message(user_id, msg.id)
-  p message
 
-  parts = message.payload.parts || []
+  # partsがnilならpayload自体を配列に
+  # メールの形式によってpartsがnilになることがあるようなので、その場合はpayloadを直接使用する
+  parts = message.payload.parts || [message.payload]
+
   parts.each do |part|
-    next unless part.filename && part.body.attachment_id
+    # 添付ファイルがあるか判定
+    next unless part.filename && part.filename != '' && part.body && part.body.attachment_id
 
     attachment = gmail_service.get_user_message_attachment(user_id, msg.id, part.body.attachment_id)
     file_path = File.join(output_dir, part.filename)
