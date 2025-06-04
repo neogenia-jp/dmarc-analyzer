@@ -82,7 +82,7 @@ result.messages.each do |msg|
     file_path = File.join(output_dir, part.filename)
 
     File.open(file_path, 'wb') do |file|
-      file.write(attachment.data.unpack1('m0'))  # Base64デコードして書き込む
+      file.write(attachment.data)
     end
 
     puts "保存しました: #{file_path}"
