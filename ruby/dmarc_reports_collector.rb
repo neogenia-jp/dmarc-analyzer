@@ -79,10 +79,6 @@ loop do
     parts = message.payload.parts || [message.payload]
 
     parts.each do |part|
-      # for debug`
-      #headers = part.headers.map{|h| [h.name, h.value]}.to_h
-      #puts "subject:#{headers['Subject']} received-time:#{Time.parse(headers['X-Received'].split(";")[1]).localtime} "
-
       next unless part.filename && part.filename != '' && part.body && part.body.attachment_id
 
       attachment = gmail_service.get_user_message_attachment(user_id, msg.id, part.body.attachment_id)
@@ -92,7 +88,12 @@ loop do
         file.write(attachment.data)
       end
 
-      puts "保存しました: #{file_path}"
+      headers = part.headers.map{|h| [h.name, h.value]}.to_h
+      received_time = headers['X-Received'] ? Time.parse(headers['X-Received'].split(";")[1]).localtime : nil
+      puts "----------------------------"
+      puts "Subject:#{headers['Subject']}" 
+      puts "Received Time: #{received_time}"
+      puts "File: #{file_path}"
     end
   end
 
