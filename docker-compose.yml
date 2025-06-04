@@ -1,4 +1,8 @@
 version: '3.5'
+
+volumes:
+  elastic_data:
+
 services:
   parsedmarc:
     build: ./parsedmarc/
@@ -18,7 +22,7 @@ services:
     environment:
       - discovery.type=single-node
     volumes:
-      - ./elastic_data:/usr/share/elasticsearch/data
+      - elastic_data:/usr/share/elasticsearch/data
     container_name: elasticsearch
 
   grafana:
