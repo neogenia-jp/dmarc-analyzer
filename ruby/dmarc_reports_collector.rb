@@ -68,24 +68,35 @@ output_dir = '/files'
 #FileUtils.mkdir_p(output_dir)
 
 # 各メッセージに対して添付ファイルを保存
-result.messages.each do |msg|
-  message = gmail_service.get_user_message(user_id, msg.id)
+page_token = nil
 
-  # partsがnilならpayload自体を配列に
-  # メールの形式によってpartsがnilになることがあるようなので、その場合はpayloadを直接使用する
-  parts = message.payload.parts || [message.payload]
+loop do
+  result = gmail_service.list_user_messages(user_id, q: query, page_token: page_token)
+  break if result.messages.nil? || result.messages.empty?
 
-  parts.each do |part|
-    # 添付ファイルがあるか判定
-    next unless part.filename && part.filename != '' && part.body && part.body.attachment_id
+  result.messages.each do |msg|
+    message = gmail_service.get_user_message(user_id, msg.id)
+    parts = message.payload.parts || [message.payload]
 
-    attachment = gmail_service.get_user_message_attachment(user_id, msg.id, part.body.attachment_id)
-    file_path = File.join(output_dir, part.filename)
+    parts.each do |part|
+      # for debug`
+      #headers = part.headers.map{|h| [h.name, h.value]}.to_h
+      #puts "subject:#{headers['Subject']} received-time:#{Time.parse(headers['X-Received'].split(";")[1]).localtime} "
 
-    File.open(file_path, 'wb') do |file|
-      file.write(attachment.data)
+      next unless part.filename && part.filename != '' && part.body && part.body.attachment_id
+
+      attachment = gmail_service.get_user_message_attachment(user_id, msg.id, part.body.attachment_id)
+      file_path = File.join(output_dir, part.filename)
+
+      File.open(file_path, 'wb') do |file|
+        file.write(attachment.data)
+      end
+
+      puts "保存しました: #{file_path}"
     end
-
-    puts "保存しました: #{file_path}"
   end
+
+  # 次のページがある場合は、ページトークンを更新（1回あたり最大100件までしかとれないため）
+  page_token = result.next_page_token
+  break unless page_token
 end
