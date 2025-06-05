@@ -46,7 +46,7 @@ query = [
   'has:attachment',
   'from:(dmarc)',
   "after:#{start_date.to_time.to_i}",
-  "before:#{(end_date + 1).to_time.to_i}" # 日付指定だとPSTタイムゾーンで解釈されるため、UNIXタイムスタンプを使用
+  "before:#{(end_date + 1).to_time.to_i}"
 ].join(' ')
 
 puts "#{start_date} ~ #{end_date} のDMARCレポートを検索します。"
@@ -76,6 +76,7 @@ loop do
 
   result.messages.each do |msg|
     message = gmail_service.get_user_message(user_id, msg.id)
+    # メールの形式によってpartsがnilになることがあるようなので、その場合はpayloadを直接使用する
     parts = message.payload.parts || [message.payload]
 
     parts.each do |part|
