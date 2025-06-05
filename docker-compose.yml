@@ -1,4 +1,8 @@
 version: '3.5'
+
+volumes:
+  elastic_data:
+
 services:
   parsedmarc:
     build: ./parsedmarc/
@@ -18,7 +22,7 @@ services:
     environment:
       - discovery.type=single-node
     volumes:
-      - ./elastic_data:/usr/share/elasticsearch/data
+      - elastic_data:/usr/share/elasticsearch/data
     container_name: elasticsearch
 
   grafana:
@@ -44,3 +48,14 @@ services:
     ports:
       - "1080:1080"
       - "1025:1025"
+
+  ruby:
+    container_name: ruby
+    build: ./ruby
+    volumes:
+      - ./ruby:/app
+      - ./files:/files
+    environment:
+      CREDENTIALS_PATH:
+      TOKEN_PATH:
+    tty: true
